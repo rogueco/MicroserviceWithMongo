@@ -15,7 +15,7 @@ namespace Play.Catalog.Service
 {
     public class Startup
     {
-        private ServiceSettings serviceSettings;
+        private ServiceSettings _serviceSettings;
 
         public Startup(IConfiguration configuration)
         {
@@ -30,13 +30,13 @@ namespace Play.Catalog.Service
             BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
             BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(BsonType.String));
 
-            serviceSettings = Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
+            _serviceSettings = Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
 
             services.AddSingleton(serviceProvider =>
             {
                 var mongoDbSettings = Configuration.GetSection(nameof(MongoDbSettings)).Get<MongoDbSettings>();
                 var mongoClient = new MongoClient(mongoDbSettings.ConnectionString);
-                return mongoClient.GetDatabase(serviceSettings.ServiceName);
+                return mongoClient.GetDatabase(_serviceSettings.ServiceName);
             });
 
             services.AddSingleton<IItemsRepository, ItemsRepository>();
